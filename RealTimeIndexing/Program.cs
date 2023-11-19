@@ -1,21 +1,22 @@
 using ElasticNetCore.Services;
 using Microsoft.EntityFrameworkCore;
-using RealTimeIndexing.Interceptors;
+using RealTimeIndexing.Entities;
+using RealTimeIndexing.Extensions;
+using RealTimeIndexing.Hubs;
 using RealTimeIndexing.Services.ElasticSearch;
+using RealTimeIndexing.SubscribeTableDependency;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSignalR();
-builder.Services.AddScoped<IElasticsearchService, ElasticsearchService>();
+builder.Services.AddSingleton<SubscribeProductTableDependency<Product>>();
+builder.Services.AddSingleton<SubscribeProductTableDependency<Category>>();
+builder.Services.AddSingleton(typeof(IElasticsearchService<>), typeof(ElasticsearchService<>));
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<NorthwindContext>(options =>
-{
-    options.UseSqlServer(connectionString);
-    options.AddInterceptors(new ChangeTrackingInterceptor());
-}, ServiceLifetime.Singleton);
+builder.Services.AddDbContext<NorthwindContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Singleton);
 
 builder.Services.AddControllers();
 
@@ -35,5 +36,10 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<IndexingHub>("/indexingHub");
+
+app.UseSqlTableDependency<SubscribeProductTableDependency<Product>>(connectionString, "Products");
+app.UseSqlTableDependency<SubscribeProductTableDependency<Category>>(connectionString, "Categories");
 
 app.Run();

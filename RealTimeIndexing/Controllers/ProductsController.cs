@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RealTimeIndexing.Entities;
 using RealTimeIndexing.Services.ElasticSearch;
@@ -11,24 +10,25 @@ namespace RealTimeIndexing.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly NorthwindContext _context;
-        private readonly IElasticsearchService _elasticsearchService;
+        private readonly IElasticsearchService<Product> _productElasticsearchService;
 
-        public ProductsController(NorthwindContext context, IElasticsearchService elasticsearchService)
+        public ProductsController(NorthwindContext context, IElasticsearchService<Product> productElasticsearchService)
         {
             _context = context;
-            _elasticsearchService = elasticsearchService;
+            _productElasticsearchService = productElasticsearchService;
         }
 
         [HttpGet("getproducts")]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-            return await _elasticsearchService.GetDocuments("products");
+            var products = await _productElasticsearchService.GetAllAsync("products");
+            return products.ToList();
         }
 
         [HttpGet("getproductbyid/{id}")]
         public async Task<ActionResult<Product>> GetProductById(int id)
         {
-            var product = await _elasticsearchService.GetDocument("products", id);
+            var product = await _productElasticsearchService.GetByIdAsync(id, "products");
 
             if (product == null)
             {

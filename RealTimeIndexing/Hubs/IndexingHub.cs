@@ -6,62 +6,9 @@ namespace RealTimeIndexing.Hubs
 {
     public class IndexingHub : Hub
     {
-        public async Task SendChangeNotification(Type type, EntityState state, Object entity)
+        public async Task SendChangeNotification()
         {
-            switch (type.Name)
-            {
-                case "Product":
-
-                    Product product = (Product)entity;
-
-                    switch (state)
-                    {
-                        case EntityState.Added:
-
-                            try
-                            {
-
-                            }
-                            catch (Exception ex)
-                            {
-
-                            }
-
-                            break;
-                        case EntityState.Modified:
-
-                            try
-                            {
-
-                            }
-                            catch (Exception ex)
-                            {
-
-                            }
-
-                            break;
-                        case EntityState.Deleted:
-
-                            try
-                            {
-
-                            }
-                            catch (Exception ex)
-                            {
-
-                            }
-
-                            break;
-                        default:
-                            break;
-                    }
-
-                    break;
-
-
-                default:
-                    break;
-            }
+          
         }
     }
 }
