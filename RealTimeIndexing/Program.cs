@@ -13,7 +13,6 @@ builder.Services.AddSignalR();
 builder.Services.AddSingleton<SubscribeProductTableDependency<Product>>();
 builder.Services.AddSingleton<SubscribeProductTableDependency<Category>>();
 builder.Services.AddSingleton(typeof(IElasticsearchService<>), typeof(ElasticsearchService<>));
-
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<NorthwindContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Singleton);

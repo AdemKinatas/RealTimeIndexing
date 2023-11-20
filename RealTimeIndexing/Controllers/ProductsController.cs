@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ElasticNetCore.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RealTimeIndexing.Entities;
 using RealTimeIndexing.Services.ElasticSearch;
@@ -28,7 +29,9 @@ namespace RealTimeIndexing.Controllers
         [HttpGet("getproductbyid/{id}")]
         public async Task<ActionResult<Product>> GetProductById(int id)
         {
-            var product = await _productElasticsearchService.GetByIdAsync(id, "products");
+            //var product = await _productElasticsearchService.GetByIdAsync(id, "products");
+            var product = await _productElasticsearchService.GetByFieldAsync(p => p.ProductId, id, "products");
+
 
             if (product == null)
             {

@@ -1,4 +1,5 @@
 ﻿
+using ElasticNetCore.Services;
 using RealTimeIndexing.Entities;
 using RealTimeIndexing.Services.ElasticSearch;
 using TableDependency.SqlClient;
@@ -43,10 +44,10 @@ namespace RealTimeIndexing.SubscribeTableDependency
                                     await _productElasticsearchService.AddAsync(product, _tableName.ToLower());
                                     break;
                                 case ChangeType.Update:
-                                    await _productElasticsearchService.UpdateAsync(product.ProductId, product, _tableName.ToLower());
+                                    await _productElasticsearchService.UpdateByFieldAsync(product.ProductId, product, "products", p => p.ProductId);
                                     break;
                                 case ChangeType.Delete:
-                                    await _productElasticsearchService.DeleteAsync(product.ProductId, _tableName.ToLower());
+                                    await _productElasticsearchService.DeleteByFieldAsync(product.ProductId, "products", p => p.ProductId);
                                     break;
                                 default:
                                     break;
