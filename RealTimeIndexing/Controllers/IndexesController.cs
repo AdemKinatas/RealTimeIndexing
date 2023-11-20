@@ -33,5 +33,11 @@ namespace RealTimeIndexing.Controllers
                 await _productElasticsearchService.AddManyAsync(products, "products");
             }
         }
+
+        [HttpGet("deleteproductindex")]
+        public async Task DeleteProductIndex()
+        {
+            await _productElasticsearchService.DeleteIndex("products");
+        }
     }
 }

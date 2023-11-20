@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Nest;
-using RealTimeIndexing.Entities;
+﻿using Nest;
 using RealTimeIndexing.Services.ElasticSearch;
 
 namespace ElasticNetCore.Services
@@ -24,7 +22,7 @@ namespace ElasticNetCore.Services
             string username = _configuration.GetSection("ElasticsearchServer").Get<ElasticsearchServer>().Username;
             string password = _configuration.GetSection("ElasticsearchServer").Get<ElasticsearchServer>().Password;
 
-            var settings = new ConnectionSettings(new Uri(host + ":" + port));
+            var settings = new ConnectionSettings(new Uri($"{host}:{port}"));
 
             if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
                 settings.BasicAuthentication(username, password);
@@ -45,6 +43,11 @@ namespace ElasticNetCore.Services
                     .Settings(s => s.NumberOfShards(3).NumberOfReplicas(1))
                     );
             return;
+        }
+
+        public async Task DeleteIndex(string indexName) 
+        {
+            await _client.Indices.DeleteAsync(indexName);
         }
 
         public async Task<T> GetByIdAsync(int id, string indexName)

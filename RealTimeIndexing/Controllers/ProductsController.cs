@@ -5,7 +5,7 @@ using RealTimeIndexing.Services.ElasticSearch;
 
 namespace RealTimeIndexing.Controllers
 {
-    [Route("api/v1/[controller]")]
+    [Route("api/v1/products")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
