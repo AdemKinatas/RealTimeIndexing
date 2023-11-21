@@ -4,6 +4,7 @@ using RealTimeIndexing.Entities;
 using RealTimeIndexing.Extensions;
 using RealTimeIndexing.Hubs;
 using RealTimeIndexing.Services.ElasticSearch;
+using RealTimeIndexing.Services.RabbitMQ;
 using RealTimeIndexing.SubscribeTableDependency;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,7 @@ builder.Services.AddSignalR();
 builder.Services.AddSingleton<SubscribeProductTableDependency<Product>>();
 builder.Services.AddSingleton<SubscribeProductTableDependency<Category>>();
 builder.Services.AddSingleton(typeof(IElasticsearchService<>), typeof(ElasticsearchService<>));
+builder.Services.AddSingleton<IRabitMQProducer, RabitMQProducer>();
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<NorthwindContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Singleton);
