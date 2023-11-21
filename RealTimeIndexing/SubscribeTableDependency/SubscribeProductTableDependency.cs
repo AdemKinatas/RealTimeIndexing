@@ -41,13 +41,16 @@ namespace RealTimeIndexing.SubscribeTableDependency
                             switch (e.ChangeType)
                             {
                                 case ChangeType.Insert:
-                                    await _productElasticsearchService.AddAsync(product, _tableName.ToLower());
+                                    //await _productElasticsearchService.AddAsync(product, _tableName.ToLower());
+                                    await _productElasticsearchService.AddByDocumentIdAsync(product, _tableName.ToLower());
                                     break;
                                 case ChangeType.Update:
-                                    await _productElasticsearchService.UpdateByFieldAsync(product.ProductId, product, "products", p => p.ProductId);
+                                    //await _productElasticsearchService.UpdateByFieldAsync(product.ProductId, product, "products", p => p.ProductId);
+                                    await _productElasticsearchService.UpdateAsync(product.ProductId, product, "products");
                                     break;
                                 case ChangeType.Delete:
-                                    await _productElasticsearchService.DeleteByFieldAsync(product.ProductId, "products", p => p.ProductId);
+                                    //await _productElasticsearchService.DeleteByFieldAsync(product.ProductId, "products", p => p.ProductId);
+                                    await _productElasticsearchService.DeleteAsync(product.ProductId, "products");
                                     break;
                                 default:
                                     break;

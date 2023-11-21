@@ -19,6 +19,31 @@ namespace RealTimeIndexing.Controllers
             _productElasticsearchService = productElasticsearchService;
         }
 
+        [HttpGet("addmanyproducts")]
+        public async Task AddManyProducts()
+        {
+            var productList = new List<Product>()
+            {
+                new Product { CategoryId = 2, ProductName = "Product1", QuantityPerUnit = "11 boxes", UnitsInStock = 50, UnitPrice = 1111 },
+                new Product { CategoryId = 2, ProductName = "Product2", QuantityPerUnit = "11 boxes", UnitsInStock = 50, UnitPrice = 1111 },
+                new Product { CategoryId = 2, ProductName = "Product3", QuantityPerUnit = "11 boxes", UnitsInStock = 50, UnitPrice = 1111 },
+                new Product { CategoryId = 2, ProductName = "Product4", QuantityPerUnit = "11 boxes", UnitsInStock = 50, UnitPrice = 1111 },
+                new Product { CategoryId = 2, ProductName = "Product5", QuantityPerUnit = "11 boxes", UnitsInStock = 50, UnitPrice = 1111 },
+                new Product { CategoryId = 2, ProductName = "Product6", QuantityPerUnit = "11 boxes", UnitsInStock = 50, UnitPrice = 1111 },
+                new Product { CategoryId = 2, ProductName = "Product7", QuantityPerUnit = "11 boxes", UnitsInStock = 50, UnitPrice = 1111 },
+                new Product { CategoryId = 2, ProductName = "Product8", QuantityPerUnit = "11 boxes", UnitsInStock = 50, UnitPrice = 1111 },
+                new Product { CategoryId = 2, ProductName = "Product9", QuantityPerUnit = "11 boxes", UnitsInStock = 50, UnitPrice = 1111 },
+                new Product { CategoryId = 2, ProductName = "Product10", QuantityPerUnit = "11 boxes", UnitsInStock = 50, UnitPrice = 1111 },
+                new Product { CategoryId = 2, ProductName = "Product11", QuantityPerUnit = "11 boxes", UnitsInStock = 50, UnitPrice = 1111 },
+                new Product { CategoryId = 2, ProductName = "Product12", QuantityPerUnit = "11 boxes", UnitsInStock = 50, UnitPrice = 1111 },
+                new Product { CategoryId = 2, ProductName = "Product13", QuantityPerUnit = "11 boxes", UnitsInStock = 50, UnitPrice = 1111 },
+                new Product { CategoryId = 2, ProductName = "Product14", QuantityPerUnit = "11 boxes", UnitsInStock = 50, UnitPrice = 1111 },
+                new Product { CategoryId = 2, ProductName = "Product15", QuantityPerUnit = "11 boxes", UnitsInStock = 50, UnitPrice = 1111 }
+            };
+            await _context.Products.AddRangeAsync(productList);
+            await _context.SaveChangesAsync();
+        }
+
         [HttpGet("getproducts")]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {

@@ -1,6 +1,7 @@
 ﻿using Nest;
 using RealTimeIndexing.Services.ElasticSearch;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace ElasticNetCore.Services
 {
@@ -96,9 +97,41 @@ namespace ElasticNetCore.Services
             }
         }
 
+        public async Task AddMultipleByDocumentIdAsync(IEnumerable<TEntity> entities, string indexName)
+        {
+            var bulkTasks = entities.Select(async entity =>
+            {
+                var request = new BulkDescriptor().Index<TEntity>(i => i
+                    .Index(indexName)
+                    .Id(GetIdValue(entity))
+                    .Document(entity)
+                );
+
+                var response = await _client.BulkAsync(request);
+
+                if (!response.IsValid)
+                {
+                    // Handle the error
+                    throw new Exception($"Elasticsearch error: {response.DebugInformation}");
+                }
+            });
+
+            await Task.WhenAll(bulkTasks);
+        }
+
         public async Task AddAsync(TEntity entity, string indexName)
         {
             var response = await _client.IndexAsync(entity, i => i.Index(indexName));
+            if (!response.IsValid)
+            {
+                // Handle the error
+                throw new Exception($"Elasticsearch error: {response.DebugInformation}");
+            }
+        }
+
+        public async Task AddByDocumentIdAsync(TEntity entity, string indexName)
+        {
+            var response = await _client.IndexAsync(entity, i => i.Index(indexName).Id(GetIdValue(entity)));
             if (!response.IsValid)
             {
                 // Handle the error
@@ -195,6 +228,39 @@ namespace ElasticNetCore.Services
             }
 
             return countResponse.Count;
+        }
+
+        private string GetIdValue<TEntity>(TEntity entity) 
+        {
+            var properties = typeof(TEntity).GetProperties();
+            // Birincil anahtarı bul
+            var primaryKeyProperty = properties.FirstOrDefault(prop => IsPrimaryKeyProperty(prop, entity));
+            if (primaryKeyProperty != null)
+            {
+                var idValue = primaryKeyProperty.GetValue(entity)?.ToString();
+                return idValue;
+            }
+            throw new InvalidOperationException("Id alanı bulunamadı");
+        }
+
+        public static bool IsPrimaryKeyProperty<TEntity>(PropertyInfo property, TEntity entity)
+        {
+            // Eğer özellik adı "ID" ile bitiyorsa ve değeri varsayılan değerine eşit değilse birincil anahtar kabul edilir.
+            if (property.Name.EndsWith("ID", StringComparison.OrdinalIgnoreCase))
+            {
+                var value = property.GetValue(entity);
+                if (value != null && !value.Equals(GetDefault(property.PropertyType)))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static object GetDefault(Type type)
+        {
+            return type.IsValueType ? Activator.CreateInstance(type) : null;
         }
     }
 }

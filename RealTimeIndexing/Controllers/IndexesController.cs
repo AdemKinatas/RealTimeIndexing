@@ -30,7 +30,7 @@ namespace RealTimeIndexing.Controllers
             {
                 var products = await _context.Products.ToListAsync();
 
-                await _productElasticsearchService.AddManyAsync(products, "products");
+                await _productElasticsearchService.AddMultipleByDocumentIdAsync(products, "products");
             }
         }
 
